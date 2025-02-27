@@ -12,6 +12,19 @@ int iteration_to_color( int i, int max );
 int iterations_at_point( double x, double y, int max );
 void compute_image( struct bitmap *bm, double xmin, double xmax, double ymin, double ymax, int max );
 
+typedef struct {
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    int image_width;
+    int image_height;
+    int max_iterations;
+    int start_row;
+    int end_row;
+    struct bitmap *bm; 
+} thread_data_t;
+
 void show_help()
 {
 	printf("Use: mandel [options]\n");
@@ -93,6 +106,12 @@ int main( int argc, char *argv[] )
 
 	// Compute the Mandelbrot image
 	compute_image(bm,xcenter-scale,xcenter+scale,ycenter-scale,ycenter+scale,max);
+
+	// Calculate the image bounds based on center and scale
+	double xmin = xcenter - scale;
+	double xmax = xcenter + scale;
+	double ymin = ycenter - scale;
+	double ymax = ycenter + scale;
 
 	  // Create and start threads
     pthread_t threads[num_threads];
@@ -204,19 +223,6 @@ int iteration_to_color( int i, int max )
 	int gray = 255*i/max;
 	return MAKE_RGBA(0,0,gray,0);
 }
-
-typedef struct {
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
-    int image_width;
-    int image_height;
-    int max_iterations;
-    int start_row;
-    int end_row;
-    struct bitmap *bm; 
-} thread_data_t;
 
 void* compute_band(void* arg) {
     thread_data_t* data = (thread_data_t*) arg;
