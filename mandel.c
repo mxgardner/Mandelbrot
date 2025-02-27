@@ -94,6 +94,39 @@ int main( int argc, char *argv[] )
 	// Compute the Mandelbrot image
 	compute_image(bm,xcenter-scale,xcenter+scale,ycenter-scale,ycenter+scale,max);
 
+	  // Create and start threads
+    pthread_t threads[num_threads];
+    thread_data_t thread_data[num_threads];
+
+    // Divide the image into bands and assign each band to a thread
+    int rows_per_thread = image_height / num_threads;
+    for (int t = 0; t < num_threads; t++) {
+        thread_data[t].xmin = xmin;
+        thread_data[t].xmax = xmax;
+        thread_data[t].ymin = ymin;
+        thread_data[t].ymax = ymax;
+        thread_data[t].image_width = image_width;
+        thread_data[t].image_height = image_height;
+        thread_data[t].max_iterations = max;
+        thread_data[t].bm = bm;
+        thread_data[t].start_row = t * rows_per_thread;
+        thread_data[t].end_row = (t == num_threads - 1) ? image_height : (thread_data[t].start_row + rows_per_thread);
+
+        // Create the thread
+        if (pthread_create(&threads[t], NULL, compute_band, (void*)&thread_data[t])) {
+            fprintf(stderr, "Error creating thread %d\n", t);
+            return 1;
+        }
+    }
+
+    // Wait for all threads to finish
+    for (int t = 0; t < num_threads; t++) {
+        if (pthread_join(threads[t], NULL)) {
+            fprintf(stderr, "Error joining thread %d\n", t);
+            return 1;
+        }
+    }
+
 	// Save the image in the stated file.
 	if(!bitmap_save(bm,outfile)) {
 		fprintf(stderr,"mandel: couldn't write to %s: %s\n",outfile,strerror(errno));
