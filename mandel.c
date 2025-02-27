@@ -7,6 +7,7 @@
 #include <math.h>
 #include <errno.h>
 #include <string.h>
+#include <pthread.h>
 
 int iteration_to_color( int i, int max );
 int iterations_at_point( double x, double y, int max );
@@ -41,6 +42,34 @@ void show_help()
 	printf("mandel -x -0.5 -y -0.5 -s 0.2\n");
 	printf("mandel -x -.38 -y -.665 -s .05 -m 100\n");
 	printf("mandel -x 0.286932 -y 0.014287 -s .0005 -m 1000\n\n");
+}
+
+void* compute_band(void* arg) {
+    thread_data_t* data = (thread_data_t*) arg;
+
+    double xmin = data->xmin;
+    double xmax = data->xmax;
+    double ymin = data->ymin;
+    double ymax = data->ymax;
+    int image_width = data->image_width;
+    int image_height = data->image_height;
+    int max_iterations = data->max_iterations;
+    int start_row = data->start_row;
+    int end_row = data->end_row;
+    struct bitmap* bm = data->bm;
+
+    // loop over the rows in this thread
+    for (int j = start_row; j < end_row; j++) {
+        for (int i = 0; i < image_width; i++) {
+            // calculate the Mandelbrot point and store the result in the bitmap
+            double x = xmin + i * (xmax - xmin) / image_width;
+            double y = ymin + j * (ymax - ymin) / image_height;
+            int iters = iterations_at_point(x, y, max_iterations);
+            bitmap_set(bm, i, j, iters);
+        }
+    }
+
+    return NULL;
 }
 
 int main( int argc, char *argv[] )
@@ -222,32 +251,4 @@ int iteration_to_color( int i, int max )
 {
 	int gray = 255*i/max;
 	return MAKE_RGBA(0,0,gray,0);
-}
-
-void* compute_band(void* arg) {
-    thread_data_t* data = (thread_data_t*) arg;
-
-    double xmin = data->xmin;
-    double xmax = data->xmax;
-    double ymin = data->ymin;
-    double ymax = data->ymax;
-    int image_width = data->image_width;
-    int image_height = data->image_height;
-    int max_iterations = data->max_iterations;
-    int start_row = data->start_row;
-    int end_row = data->end_row;
-    struct bitmap* bm = data->bm;
-
-    // loop over the rows in this thread
-    for (int j = start_row; j < end_row; j++) {
-        for (int i = 0; i < image_width; i++) {
-            // calculate the Mandelbrot point and store the result in the bitmap
-            double x = xmin + i * (xmax - xmin) / image_width;
-            double y = ymin + j * (ymax - ymin) / image_height;
-            int iters = iterations_at_point(x, y, max_iterations);
-            bitmap_set(bm, i, j, iters);
-        }
-    }
-
-    return NULL;
 }
