@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <string.h>
 #include <pthread.h>
+#include <time.h>
 
 int iteration_to_color( int i, int max );
 int iterations_at_point( double x, double y, int max );
@@ -142,7 +143,10 @@ int main( int argc, char *argv[] )
 	double ymin = ycenter - scale;
 	double ymax = ycenter + scale;
 
-	  // Create and start threads
+	// Start the clock
+	clock_t start_time = clock();
+
+	// Create and start threads
     pthread_t threads[num_threads];
     thread_data_t thread_data[num_threads];
 
@@ -174,6 +178,11 @@ int main( int argc, char *argv[] )
             return 1;
         }
     }
+
+	// Stop the timer
+    clock_t end_time = clock();
+    double elapsed_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
+    printf("Execution Time: %f seconds\n", elapsed_time);
 
 	// Save the image in the stated file.
 	if(!bitmap_save(bm,outfile)) {
