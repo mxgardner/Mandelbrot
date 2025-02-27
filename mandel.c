@@ -171,3 +171,44 @@ int iteration_to_color( int i, int max )
 	int gray = 255*i/max;
 	return MAKE_RGBA(0,0,gray,0);
 }
+
+typedef struct {
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    int image_width;
+    int image_height;
+    int max_iterations;
+    int start_row;
+    int end_row;
+    struct bitmap *bm; 
+} thread_data_t;
+
+void* compute_band(void* arg) {
+    thread_data_t* data = (thread_data_t*) arg;
+
+    double xmin = data->xmin;
+    double xmax = data->xmax;
+    double ymin = data->ymin;
+    double ymax = data->ymax;
+    int image_width = data->image_width;
+    int image_height = data->image_height;
+    int max_iterations = data->max_iterations;
+    int start_row = data->start_row;
+    int end_row = data->end_row;
+    struct bitmap* bm = data->bm;
+
+    // loop over the rows in this thread
+    for (int j = start_row; j < end_row; j++) {
+        for (int i = 0; i < image_width; i++) {
+            // calculate the Mandelbrot point and store the result in the bitmap
+            double x = xmin + i * (xmax - xmin) / image_width;
+            double y = ymin + j * (ymax - ymin) / image_height;
+            int iters = iterations_at_point(x, y, max_iterations);
+            bitmap_set(bm, i, j, iters);
+        }
+    }
+
+    return NULL;
+}
