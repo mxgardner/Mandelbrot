@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Example data for Experiment A and Experiment B
+# Amount of threads being tested
 threads = [1, 2, 3, 4, 5, 10, 50]
 
 # Execution times for the experiments
@@ -21,9 +21,6 @@ plt.plot(threads, exec_time_B, label='Experiment B (mandel -x 0.2869325 -y 0.014
 plt.xlabel('Number of Threads')
 plt.ylabel('Execution Time (seconds)')
 plt.title('Execution Time vs Number of Threads')
-
-# Log scale if needed
-# plt.yscale('log')
 
 # Show legend
 plt.legend()
