@@ -4,7 +4,7 @@ import numpy as np
 # Example data for Experiment A and Experiment B
 threads = [1, 2, 3, 4, 5, 10, 50]
 
-# Replace these values with the actual execution times for your experiments
+# Execution times for the experiments
 exec_time_A = [3.444, 3.284, 2.805, 2.494, 2.452, 2.116, 1.912]  # Experiment A times
 exec_time_B = [8.395, 6.376, 5.805, 5.384, 5.198, 4.746, 4.710]  # Experiment B times
 
