@@ -44,6 +44,7 @@ int main( int argc, char *argv[] )
 	int    image_width = 500;
 	int    image_height = 500;
 	int    max = 1000;
+	int num_threads = 1;
 
 	// For each command line argument given,
 	// override the appropriate configuration value.
@@ -75,6 +76,9 @@ int main( int argc, char *argv[] )
 				show_help();
 				exit(1);
 				break;
+			case 'n':
+            	num_threads = atoi(optarg);
+            	break;
 		}
 	}
 
