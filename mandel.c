@@ -92,38 +92,38 @@ int main( int argc, char *argv[] )
 	// For each command line argument given,
 	// override the appropriate configuration value.
 
-	while((c = getopt(argc,argv,"x:y:s:W:H:m:o:h"))!=-1) {
-		switch(c) {
-			case 'x':
-				xcenter = atof(optarg);
-				break;
-			case 'y':
-				ycenter = atof(optarg);
-				break;
-			case 's':
-				scale = atof(optarg);
-				break;
-			case 'W':
-				image_width = atoi(optarg);
-				break;
-			case 'H':
-				image_height = atoi(optarg);
-				break;
-			case 'm':
-				max = atoi(optarg);
-				break;
-			case 'o':
-				outfile = optarg;
-				break;
-			case 'n':
-            	num_threads = atoi(optarg);
-            	break;
-			case 'h':
-				show_help();
-				exit(1);
-				break;
-		}
-	}
+	while((c = getopt(argc, argv, "x:y:s:W:H:m:o:n:h")) != -1) {
+    switch(c) {
+        case 'x':
+            xcenter = atof(optarg);
+            break;
+        case 'y':
+            ycenter = atof(optarg);
+            break;
+        case 's':
+            scale = atof(optarg);
+            break;
+        case 'W':
+            image_width = atoi(optarg);
+            break;
+        case 'H':
+            image_height = atoi(optarg);
+            break;
+        case 'm':
+            max = atoi(optarg);
+            break;
+        case 'o':
+            outfile = optarg;
+            break;
+        case 'n':  // Handle number of threads here
+            num_threads = atoi(optarg);
+            break;
+        case 'h':
+            show_help();
+            exit(1);
+            break;
+    }
+}
 
 	// Display the configuration of the image.
 	printf("mandel: x=%lf y=%lf scale=%lf max=%d outfile=%s\n",xcenter,ycenter,scale,max,outfile);
