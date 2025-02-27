@@ -115,13 +115,13 @@ int main( int argc, char *argv[] )
 			case 'o':
 				outfile = optarg;
 				break;
+			case 'n':
+            	num_threads = atoi(optarg);
+            	break;
 			case 'h':
 				show_help();
 				exit(1);
 				break;
-			case 'n':
-            	num_threads = atoi(optarg);
-            	break;
 		}
 	}
 
